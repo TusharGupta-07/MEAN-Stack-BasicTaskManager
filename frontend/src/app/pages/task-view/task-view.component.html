@@ -1,0 +1,72 @@
+<mat-toolbar color="primary" style="background-color: transparent;box-shadow:0 4px 6px -6px #222;">
+    <span class="material-icons md-dark " style="padding: 5px;font-weight: bold;">
+        menu
+    </span>
+    <span style="font-weight: bold; color:black; padding-left: 1%;">Task Management</span>
+    <div class="spacer"></div>
+    <a mat-button style="font-weight: bold; color:black;padding-right: 1%;">Home</a>
+
+</mat-toolbar>
+<div class="centered-content">
+
+    <div class="task-manager-container">
+        <div class="sidebar">
+            <h1 class="title has-text-primary">List</h1>
+            <div class="list-menu">
+
+                <a href="#" style="justify-content: center;" class="list-menu-item" *ngFor="let list of lists" [routerLink]="['/lists',list._id]"
+                    routerLinkActive="is-active">
+                    <input *ngIf="list.isEdit" type="text" 
+                    [(ngModel)]="list.title"
+
+                    (keyup.enter)="onEnterEditList(list)"
+                    style="background-color: #222;color: white;border-color: black; outline: none;"
+                    />
+
+                    <span *ngIf="!list.isEdit" class="material-icons md-18" style="padding-right: 5px; " (click)="EditListTitle(list)">
+                        edit
+                        </span>
+                    <p  *ngIf="!list.isEdit" editable class="white-text">
+                        {{list.title}}
+                        <span class="pull-right task-delete btn-rounded-corners " (click)="deleteList(list._id)">X</span>
+                        
+                    </p>
+                    
+                </a>
+            </div>
+            <div style="display: flex;justify-content:center;">
+                <span class="material-icons md-light md-36" (click)="addNewList()">
+                    add_circle
+                </span>
+            </div>
+        </div>
+        <div class="task-list-container" >
+            <h1 class="title has-text-primary">Tasks</h1>
+            <div class="task" *ngFor="let task of tasks">
+                <input *ngIf="task.isEdit" type="text" 
+                    [(ngModel)]="task.title"
+
+                    (keyup.enter)="onEnterEditTask(task)"
+                    style="background-color: #222;color: white; width: 100%;font-size: 1.3rem;"
+                    />
+                
+                <p *ngIf="!task.isEdit" class="white-text" style="font-size: 1.3rem;">
+                    <span *ngIf="!task.isEdit" class="material-icons md-18" style="padding-right: 5px; " (click)="EditTaskTitle(task)">
+                        edit
+                        </span>
+                        <span (dblclick)="taskInCompleted(task._id)" *ngIf="task.completed" style="text-decoration:line-through;color:rgb(153, 153, 153)" inactive>{{task.title}}</span>
+                    <span (dblclick)="taskCompleted(task._id)" *ngIf="!task.completed">{{task.title}}</span> 
+
+                    <span class="pull-right task-delete btn-rounded-corners " (click)="deleteTask(task._listId,task._id)">X</span>
+                </p>
+            </div>
+
+            <div style="display: flex;justify-content:center;">
+                <span class="material-icons md-light md-36" (click)="addNewTask()">
+                    add_circle
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>

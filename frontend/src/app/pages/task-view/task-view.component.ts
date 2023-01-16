@@ -15,7 +15,7 @@ export class TaskViewComponent {
   ];
   tasks: Task[] = [];
   id: any;
-  startId? : string = "";
+  startId?: string = "";
   isEdit = false;
   constructor(
     private taskService: TaskService,
@@ -23,15 +23,18 @@ export class TaskViewComponent {
     private router: Router,
     private cd: ChangeDetectorRef
   ) { }
+
+
+
   ngOnInit() {
 
     //getting all the List from database, 
     //subscribe -> it is used for storing and converting the received data, 
     //it is called after the successfull http response.
-    
+
     this.taskService.getAllList()
       .subscribe((lists: any) => {
-        this.lists = lists; 
+        this.lists = lists;
 
         this.startId = this.lists.at(0)?._id;
         this.route.params.subscribe((params: any) => {
@@ -39,22 +42,16 @@ export class TaskViewComponent {
           // console.log(params.listId);
           this.id = params.listId;
           this.taskService.getTaskById(params.listId).subscribe((tasks: any) => this.tasks = tasks);
+          console.log(this.tasks);
         })
-       
-        
-         if (!this.id) {
+
+
+        if (!this.id) {
           this.taskService.getTaskById(this.startId!).subscribe((tasks: any) => this.tasks = tasks);
           this.router.navigate([`lists/${this.startId!}`]);
         }
-        
-        
-        
-           
 
       });
-    
-
-
 
   }
 
@@ -74,7 +71,7 @@ export class TaskViewComponent {
 
 
   }
-
+  //------------------
 
   //Deletion of task by id
 
@@ -82,30 +79,38 @@ export class TaskViewComponent {
     this.taskService.DeleteTaskById(_listId, _id).subscribe((data: any) => { console.log(data); this.tasks = this.tasks.filter(l => l._id != data._id) });
 
   }
+  //------------------
 
   //add new task
-  addNewTask() {    
-      this.taskService.createNewTask(this.id).subscribe((data: any) => { console.log(data); 
-        this.ngOnInit();
-      });
-        
+  async addNewTask() {
+    var dataAddNewTask: string;
+    this.taskService.createNewTask(this.id).subscribe((data: any) => {
+      console.log(data);
+      this.tasks.push(data);
+      //this.ngOnInit();
+      this.EditTaskTitle(data);
+    });
   }
+  //------------------
 
   //add new list
   addNewList() {
     var newListId;
-    this.taskService.createNewList().subscribe((data: any) => { console.log(data); 
-    newListId = data._id;
-    this.ngOnInit();
-    this.router.navigate([`lists/${newListId}`]);
- 
+    this.taskService.createNewList().subscribe((data: any) => {
+      console.log(data);
+      newListId = data._id;
+      //this.ngOnInit();
+      this.router.navigate([`lists/${newListId}`]);
+      this.lists.push(data);
+      this.EditListTitle(data);
+
     });
 
 
 
 
   }
-
+  //------------------
 
   //Edit list Title
   EditListTitle(list: any) {
@@ -148,9 +153,8 @@ export class TaskViewComponent {
   //-----------
 
   //task completed
-  taskCompleted(taskId : any)
-  {
-    this.taskService.taskCompletedOrNot("true", this.id, taskId).subscribe((data:any) => {
+  taskCompleted(taskId: any) {
+    this.taskService.taskCompletedOrNot("true", this.id, taskId).subscribe((data: any) => {
       this.tasks = data;
       console.log(data);
       this.ngOnInit();
@@ -158,9 +162,8 @@ export class TaskViewComponent {
     });
   }
 
-  taskInCompleted(taskId:any)
-  {
-    this.taskService.taskCompletedOrNot("false", this.id, taskId).subscribe((data:any) => {
+  taskInCompleted(taskId: any) {
+    this.taskService.taskCompletedOrNot("false", this.id, taskId).subscribe((data: any) => {
       this.tasks = data;
       console.log(data);
       this.ngOnInit();
@@ -168,3 +171,5 @@ export class TaskViewComponent {
     });
   }
 }
+
+//------------------
